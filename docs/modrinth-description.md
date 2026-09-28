@@ -4,7 +4,7 @@
 
 Focus Crosshair replaces the vanilla crosshair with a compact, smoothly animated reticle that responds to what you look at and what you do. Four clean segments, an optional center dot, soft neutral colors, and subtle motion that stays out of the way.
 
-![Focus Crosshair in game](https://raw.githubusercontent.com/wuttashi1/focus-crosshair/main/docs/assets/gameplay.png)
+![Focus Crosshair in game](https://raw.githubusercontent.com/wuttashi1/focus-crosshair/main/docs/assets/gameplay.gif)
 
 *Other visual mods and resource packs shown in the screenshot are not included.*
 

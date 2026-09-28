@@ -8,9 +8,9 @@
 
 A small, purely visual, spring-animated crosshair for **Minecraft Java 26.2+**, **Fabric**, and **Java 25**. Client-side only.
 
-[![Focus Crosshair gameplay](docs/assets/gameplay.png)](https://github.com/wuttashi1/focus-crosshair/releases/download/v1.0.0/Animation.gif)
+![Focus Crosshair gameplay animation](docs/assets/gameplay.gif)
 
-*Gameplay captured by the author. [Full animation](https://github.com/wuttashi1/focus-crosshair/releases/download/v1.0.0/Animation.gif) (118 MiB). Other visual mods and resource packs visible in the recording are not included.*
+*Gameplay captured by the author. The animation loops automatically. Other visual mods and resource packs visible in the recording are not included.*
 
 ## Features
 

@@ -4,7 +4,7 @@
 
 Focus Crosshair заменяет стандартный прицел компактным анимированным прицелом, который реагирует на ваши действия и объекты под ним. Четыре аккуратных сегмента, отключаемая центральная точка, спокойные цвета и плавные движения.
 
-![Focus Crosshair в игре](https://raw.githubusercontent.com/wuttashi1/focus-crosshair/main/docs/assets/gameplay.png)
+![Focus Crosshair в игре](https://raw.githubusercontent.com/wuttashi1/focus-crosshair/main/docs/assets/gameplay.gif)
 
 *Другие визуальные моды и ресурспаки на скриншоте в комплект не входят.*
 

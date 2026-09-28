@@ -8,9 +8,9 @@
 
 Минималистичный анимированный прицел для **Minecraft Java 26.2**, **Fabric** и **Java 25**. Работает только на клиенте.
 
-[![Focus Crosshair в игре](docs/assets/gameplay.png)](https://github.com/wuttashi1/focus-crosshair/releases/download/v1.0.0/Animation.gif)
+![Анимация Focus Crosshair в игре](docs/assets/gameplay.gif)
 
-*Запись автора. [Полная анимация](https://github.com/wuttashi1/focus-crosshair/releases/download/v1.0.0/Animation.gif) — 118 МиБ. Другие визуальные моды и ресурспаки из записи в комплект не входят.*
+*Запись автора. Анимация повторяется автоматически. Другие визуальные моды и ресурспаки из записи в комплект не входят.*
 
 ## Возможности
 
