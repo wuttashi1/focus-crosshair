@@ -1,49 +1,75 @@
+![Focus Crosshair — five shapes, live preview and PNG import](https://raw.githubusercontent.com/wuttashi1/focus-crosshair/main/docs/assets/banner-1.1.png)
+
 # Focus Crosshair
 
-**A little motion. A clearer focus.**
+**Your shape. Your motion. Your focus.**
 
-Focus Crosshair replaces the vanilla crosshair with a compact, smoothly animated reticle that responds to what you look at and what you do. Four clean segments, an optional center dot, soft neutral colors, and subtle motion that stays out of the way.
+A customizable, spring-animated crosshair for **Minecraft Java 26.2 / Fabric**. It opens up in the air, tightens over targets, and settles with a visible bounce. Purely visual, client-side, and built around small GUI geometry.
 
-![Focus Crosshair in game](https://raw.githubusercontent.com/wuttashi1/focus-crosshair/main/docs/assets/gameplay.gif)
+## Make it yours
 
-*Other visual mods and resource packs shown in the screenshot are not included.*
+**Five built-in shapes** — Focus, Brackets, Diamond, Ring and Chevron. Combine them with **five color skins** — Frost, Ivory, Mint, Amber and Lilac — or set your own colors for air, blocks, interactions and entities.
 
-## Small details that make a difference
+Adjust scale, segment length, line thickness, center gap, center-dot size, outline opacity, transparency and rotation. Each shape shares the same animation system.
 
-- **Contextual focus:** the crosshair gently tightens over blocks and entities, with a distinct, restrained state for supported interactable blocks.
-- **Spring animation:** scale, gap, opacity and visual effects respond smoothly over time.
-- **Movement response:** subtle reactions to sprinting, sneaking, jumping, landing, swimming and elytra flight.
-- **Combat feedback:** short attack and damage pulses, plus a small confirmation pulse when the server reports damage attributed to you.
-- **Mining progress:** a thin, 16-segment indicator follows actual client block-breaking progress.
-- **Item use:** gentle responses to eating, drinking, bow and crossbow charging, shields and other use actions.
-- **Your preferred look:** adjust colors, opacity, size, line thickness, spacing and animation strength. Disable individual context effects or the center dot.
+## More bounce. Clearer focus.
 
-Optional low-health animation is deliberately subtle. Idle breathing is off by default.
+Version **1.1** has a more expressive default spring response. Tune **bounce**, **animation speed** and **pulse strength** independently.
 
-## Purely visual
+Set separate size and gap factors for air, blocks, interactable blocks and entities. Optional distance response adds contraction as you approach the currently selected target, then expands the graphic as you move away. Both the effect strength and distance range are configurable.
 
-Focus Crosshair does not change your aim, camera, mouse input, reach, hitboxes or targeting. It sends no packets and needs no server-side installation. Visual focus uses segment compression; the center dot stays at the true aiming point.
+Only the graphic changes. The mod does not change aim, camera rotation, mouse input, raycasts, reach or hitboxes, and sends no packets.
 
-The vanilla attack-cooldown indicator is preserved. The crosshair respects first-person and spectator visibility, F1, and the debug crosshair, and hides in menus.
+## A live settings studio
 
-## Installation
+Six sections keep the controls organized: **Styles, Shape, Animation, Focus, Effects and Colors**.
 
-Requires **Minecraft Java 26.2**, **Fabric Loader 0.19.5+**, **Fabric API for 26.2** and **Java 25+**.
+The persistent preview uses the same renderer as the in-game crosshair. Let it cycle through target states, select a particular target, switch between near and far, or trigger attack and hit pulses. Inspect the result at **1× or 3×** while changing settings. Color editing automatically previews the corresponding target state.
 
-Place the mod JAR in your `mods` folder. Install **Mod Menu** optionally to access the settings screen. The mod works without it.
+Settings apply immediately and save on exit. Use the mouse wheel or page buttons for additional controls. Layout adapts to GUI size, and Reset restores the defaults.
 
-## Configuration
+## Import your own crosshair
 
-Open the mod's settings through Mod Menu, or edit `config/focuscrosshair.json` while Minecraft is closed. In-game settings apply immediately and save when you leave the screen.
+Choose **Import PNG** in Styles to browse folders and drives, paste a file path, or drag a PNG onto the settings screen.
 
-Assign **Toggle Focus Crosshair** under **Controls → Key Binds → Focus Crosshair**. It is unbound by default. Disable the mod to restore the previous crosshair renderer.
+- Static PNG, up to **512 × 512 pixels** and **1 MiB**; a transparent background is recommended.
+- The image is copied to `config/focuscrosshair/custom.png`. The original stays untouched.
+- Aspect ratio is preserved. Adjust its displayed size and optionally tint it with the target colors.
+- Custom images use the same scale, bounce, rotation and pulse animation. Internal segment spacing and the center dot remain part of your image.
+- The texture is loaded once and reused. A missing or unreadable image falls back to Focus; a failed replacement leaves the previous image intact.
+
+[Download a sample transparent PNG](https://raw.githubusercontent.com/wuttashi1/focus-crosshair/main/docs/assets/sample-crosshair.png)
+
+## Context effects
+
+- Subtle movement response for sprinting, sneaking, jumping, landing, swimming and elytra flight.
+- Attack, interaction and damage pulses; hit confirmation when the server reports damage attributed to you.
+- A thin, 16-segment indicator following actual client block-breaking progress.
+- Responses to eating, drinking, bows, crossbows, shields and other use actions.
+- Optional low-health pulse and idle breathing. Breathing is off by default.
+
+Individual effects can be disabled. The vanilla attack-cooldown indicator is preserved. First-person, spectator, F1 and debug-crosshair visibility are respected; gameplay crosshairs hide in menus and while sleeping.
+
+## Install and configure
+
+Requires **Minecraft 26.2**, **Fabric Loader 0.19.5+**, **Fabric API 0.161.0+26.2** and **Java 25+**. Place `focus-crosshair-1.1.0.jar` in `mods`. No server installation is needed.
+
+**Mod Menu is optional.** Open settings through Mod Menu, or assign **Open Focus Crosshair settings** under Controls → Key Binds → Focus Crosshair. There is also a separate toggle binding; both are unbound by default.
+
+Configuration: `config/focuscrosshair.json`. Existing 1.0 settings are preserved; new options receive the 1.1 defaults. Without the settings screen, edit JSON while the game is closed. Colors use `#AARRGGBB`.
 
 English, German and Russian UI translations are included.
 
-## Compatibility notes
+## Gameplay clip
 
-Built and launched on **26.2**. Later 26.x versions are not yet verified. Rendering uses Minecraft's GUI abstractions without direct OpenGL calls; Vulkan and combinations with Sodium, Iris, Spatial GUI or other HUD mods still need separate testing. Another crosshair replacement may take priority.
+![Focus Crosshair gameplay](https://raw.githubusercontent.com/wuttashi1/focus-crosshair/main/docs/assets/gameplay.gif)
 
-Some modded block interactions may use ordinary block focus. Hit confirmation requires server damage events attributed to the local player.
+*Author's recording of version 1.0; it does not show the new 1.1 settings studio. Other visual mods and resource packs shown are not included.*
 
-[Source code](https://github.com/wuttashi1/focus-crosshair) · [Report an issue](https://github.com/wuttashi1/focus-crosshair/issues)
+## Compatibility
+
+Compiled against **26.2**. Version 1.1 is build- and logic-tested; it has not been launched in Minecraft. Later 26.x releases, Vulkan and combinations with Sodium, Iris, Spatial GUI or other HUD mods have not been separately verified.
+
+Rendering uses Minecraft GUI abstractions, with no direct OpenGL calls. Another crosshair replacement may take priority. Some modded interactions may use ordinary block focus; hit confirmation depends on server damage events. Visual magnetism uses segment compression rather than moving the aiming center.
+
+[Source code](https://github.com/wuttashi1/focus-crosshair) · [Download](https://github.com/wuttashi1/focus-crosshair/releases/latest) · [Report an issue](https://github.com/wuttashi1/focus-crosshair/issues)

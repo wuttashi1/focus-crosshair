@@ -2,6 +2,8 @@ package dev.wutshy.focuscrosshair.render;
 
 import dev.wutshy.focuscrosshair.FocusCrosshairClient;
 import dev.wutshy.focuscrosshair.animation.SpringValue;
+import dev.wutshy.focuscrosshair.animation.FocusTargets;
+import dev.wutshy.focuscrosshair.config.CrosshairStyle;
 import dev.wutshy.focuscrosshair.config.FocusConfig;
 import dev.wutshy.focuscrosshair.mixin.MiningAccess;
 import net.minecraft.client.AttackIndicatorStatus;
@@ -77,7 +79,7 @@ public final class CrosshairRenderer {
         if (client.player == null || client.level == null || client.isPaused()) return;
         boolean nowGrounded = client.player.onGround();
         if (config().enabled && config().movementAnimations && client.gui.screen() == null && nowGrounded != grounded) {
-            gap.impulse(nowGrounded ? -9 : 7);
+            gap.impulse((nowGrounded ? -9 : 7) * config().pulseStrength);
         }
         grounded = nowGrounded;
     }
@@ -88,18 +90,18 @@ public final class CrosshairRenderer {
     }
 
     public void attack() {
-        if (active(Minecraft.getInstance()) && config().attackAnimation) attack.impulse(40);
+        if (active(Minecraft.getInstance()) && config().attackAnimation) attack.impulse(40 * config().pulseStrength);
     }
 
     public void interaction() {
-        if (active(Minecraft.getInstance()) && config().interactionPulse) interaction.impulse(38);
+        if (active(Minecraft.getInstance()) && config().interactionPulse) interaction.impulse(38 * config().pulseStrength);
     }
 
     public void damage(ClientboundDamageEventPacket packet) {
         Minecraft client = Minecraft.getInstance();
         if (!active(client)) return;
-        if (packet.entityId() == client.player.getId()) damage.impulse(24);
-        else if (config().hitAnimation && packet.sourceCauseId() == client.player.getId()) hit.impulse(42);
+        if (packet.entityId() == client.player.getId() && config().damageAnimation) damage.impulse(24 * config().pulseStrength);
+        else if (config().hitAnimation && packet.sourceCauseId() == client.player.getId()) hit.impulse(42 * config().pulseStrength);
     }
 
     private boolean visible(Minecraft client) {
@@ -150,14 +152,9 @@ public final class CrosshairRenderer {
         target(client);
         FocusConfig c = config();
         LocalPlayer player = client.player;
-        focus.target = switch (targetKind) { case 1 -> 0.5; case 2 -> 0.7; case 3 -> 0.8; case 4 -> 1; default -> 0; };
-        scale.target = 1 - focus.value * 0.08;
-        gap.target = c.gap - focus.value * 0.55;
-        length.target = targetKind == 2 ? 2.05 : 2.5;
-        thickness.target = c.lineThickness;
-        opacity.target = Math.min(1, c.crosshairOpacity + focus.value * 0.12);
-        dot.target = c.centerDot ? 1 + focus.value * 0.25 : 0;
-        rotation.target = 0;
+        double distance = client.hitResult == null ? c.distanceRange
+            : client.hitResult.getLocation().distanceTo(client.gameRenderer.mainCamera().position());
+        applyFocus(c, targetKind, distance);
         if (c.movementAnimations) {
             if (player.isSprinting()) gap.target += 0.55;
             if (player.isCrouching()) gap.target -= 0.3;
@@ -203,52 +200,102 @@ public final class CrosshairRenderer {
         if (!c.attackAnimation) attack.reset(0);
         if (!c.hitAnimation) hit.reset(0);
         if (!c.interactionPulse) interaction.reset(0);
-        for (SpringValue spring : springs) spring.update(dt, c.animationSpeed);
+        if (!c.damageAnimation) damage.reset(0);
+        for (SpringValue spring : springs) spring.animate(dt, c.animationSpeed, c.bounce);
         graphics.nextStratum();
         draw(graphics, graphics.guiWidth() / 2f, graphics.guiHeight() / 2f, c);
         attackIndicator(graphics, client);
     }
 
-    public void preview(GuiGraphicsExtractor graphics, float x, float y) {
+    private void applyFocus(FocusConfig c, int kind, double distance) {
+        focus.target = switch (kind) { case 1 -> 0.5; case 2 -> 0.7; case 3 -> 0.8; case 4 -> 1; default -> 0; };
+        scale.target = FocusTargets.scale(c, kind, distance);
+        gap.target = FocusTargets.gap(c, kind, distance);
+        length.target = c.segmentLength * (kind == 2 ? 0.85 : 1);
+        thickness.target = c.lineThickness;
+        opacity.target = Math.min(1, c.crosshairOpacity + focus.target * 0.12);
+        dot.target = c.centerDot ? c.dotSize * (1 + focus.target * 0.25) : 0;
+        rotation.target = Math.toRadians(c.baseRotation);
+    }
+
+    public void preview(GuiGraphicsExtractor graphics, float x, float y, double dt, int kind, double distance) {
+        targetKind = kind;
         FocusConfig c = config();
-        int color = alpha(c.defaultArgb, c.crosshairOpacity);
-        graphics.pose().pushMatrix();
-        graphics.pose().translate(x, y);
-        graphics.pose().scale((float)c.crosshairScale);
-        for (int i = 0; i < 4; i++) {
-            rect(graphics, c.gap, -c.lineThickness / 2, 2.5, c.lineThickness, color);
-            graphics.pose().rotate((float)(Math.PI / 2));
-        }
-        if (c.centerDot) rect(graphics, -0.5, -0.5, 1, 1, color);
-        graphics.pose().popMatrix();
+        applyFocus(c, kind, distance);
+        if (!c.attackAnimation) attack.reset(0);
+        if (!c.hitAnimation) hit.reset(0);
+        for (SpringValue spring : springs) spring.animate(dt, c.animationSpeed, c.bounce);
+        draw(graphics, x, y, c);
+    }
+
+    public void previewPulse(boolean confirmedHit) {
+        if (confirmedHit) hit.impulse(42 * config().pulseStrength);
+        else attack.impulse(40 * config().pulseStrength);
     }
 
     private void draw(GuiGraphicsExtractor g, float x, float y, FocusConfig c) {
         int rgb = switch (targetKind) { case 1 -> c.blockArgb; case 2 -> c.interactableArgb; case 3, 4 -> c.entityArgb; default -> c.defaultArgb; };
         int color = alpha(rgb, opacity.value);
-        double s = c.crosshairScale * Math.clamp(scale.value + attack.value * 0.03 - hit.value * 0.04 + damage.value * 0.035, 0.7, 1.3);
-        double distance = Math.max(0.4, gap.value + attack.value * 0.55 - hit.value * 0.4 + damage.value * 0.4);
-        double compression = c.visualMagnetism ? focus.value * c.magnetismStrength * 0.1 : 0;
+        double s = c.crosshairScale * Math.clamp(scale.value + attack.value * 0.05 - hit.value * 0.06 + damage.value * 0.04, 0.3, 2.3);
+        double distance = Math.max(0.15, gap.value + attack.value * 0.65 - hit.value * 0.45 + damage.value * 0.45);
+        double compression = c.visualMagnetism ? Math.clamp(focus.value, 0, 1) * c.magnetismStrength * 0.1 : 0;
         double ox = Math.clamp(offsetX.value, -2, 2), oy = Math.clamp(offsetY.value, -2, 2);
         g.pose().pushMatrix();
         g.pose().translate(x, y);
         g.pose().scale((float)s);
         g.pose().rotate((float)rotation.value);
-        for (int i = 0; i < 4; i++) {
-            double drift = switch(i) { case 0 -> ox; case 1 -> oy; case 2 -> -ox; default -> -oy; };
-            double d = Math.max(0.4, distance + drift * 0.45 - (i % 2 == 0 ? compression : 0));
-            double t = Math.max(0.4, thickness.value), l = Math.max(1, length.value);
-            rect(g, d - 0.35, -t / 2 - 0.35, l + 0.7, t + 0.7, alpha(0xFF101820, opacity.value * 0.35));
-            rect(g, d, -t / 2, l, t, color);
+        CrosshairStyle style = c.style;
+        boolean custom = style == CrosshairStyle.CUSTOM && FocusCrosshairClient.CUSTOM.available();
+        double t = Math.max(0.4, thickness.value), l = Math.max(1, length.value);
+        int outline = alpha(0xFF101820, opacity.value * c.outlineOpacity);
+        if (custom) {
+            FocusCrosshairClient.CUSTOM.draw(g, c.customSize, c.customTint ? color : alpha(0xFFFFFFFF, opacity.value));
+        } else if (style == CrosshairStyle.RING) {
+            double radius = distance + l * 0.6;
+            for (int i = 0; i < 32; i++) {
+                if (i % 8 != 0) segment(g, radius, -0.35, t, 0.7, color, outline);
+                g.pose().rotate((float)(Math.PI / 16));
+            }
+        } else if (style == CrosshairStyle.DIAMOND) {
+            double r = (distance + l * 0.5) * 0.7;
+            g.pose().rotate((float)(Math.PI / 4));
+            for (int i = 0; i < 4; i++) {
+                segment(g, -r, -r, r * 2, t, color, outline);
+                g.pose().rotate((float)(Math.PI / 2));
+            }
+            g.pose().rotate((float)(-Math.PI / 4));
+        } else if (style == CrosshairStyle.CHEVRON) {
+            g.pose().pushMatrix();
+            g.pose().translate(0, (float)-distance);
+            g.pose().rotate((float)(Math.PI / 4));
+            segment(g, 0, -t / 2, l + 1, t, color, outline);
             g.pose().rotate((float)(Math.PI / 2));
+            segment(g, 0, -t / 2, l + 1, t, color, outline);
+            g.pose().popMatrix();
+        } else {
+            for (int i = 0; i < 4; i++) {
+                double drift = switch(i) { case 0 -> ox; case 1 -> oy; case 2 -> -ox; default -> -oy; };
+                double d = Math.max(0.15, distance + drift * 0.45 - (i % 2 == 0 ? compression : 0));
+                if (style == CrosshairStyle.BRACKETS) {
+                    segment(g, d, d + l - t, l, t, color, outline);
+                    segment(g, d + l - t, d, t, l, color, outline);
+                } else segment(g, d, -t / 2, l, t, color, outline);
+                g.pose().rotate((float)(Math.PI / 2));
+            }
         }
-        if (dot.value > 0.01) {
+        if (!custom && dot.value > 0.01) {
             double size = Math.max(0, dot.value + hit.value * 0.25);
-            rect(g, -size / 2, -size / 2, size, size, color);
+            segment(g, -size / 2, -size / 2, size, size, color, outline);
         }
-        if (ring.value > 0.01) radial(g, 6.5, mining.value, alpha(rgb, ring.value), 0.55);
-        if (interaction.value > 0.025) radial(g, 5.5 + interaction.value * 1.3, 1, alpha(rgb, interaction.value * 0.22), 0.45);
+        double radius = custom ? c.customSize / 2 + 2 : distance + l + 2;
+        if (ring.value > 0.01) radial(g, radius, mining.value, alpha(rgb, ring.value), 0.55);
+        if (interaction.value > 0.025) radial(g, radius + interaction.value * 1.3, 1, alpha(rgb, interaction.value * 0.22), 0.45);
         g.pose().popMatrix();
+    }
+
+    private static void segment(GuiGraphicsExtractor g, double x, double y, double width, double height, int color, int outline) {
+        if ((outline >>> 24) != 0) rect(g, x - 0.35, y - 0.35, width + 0.7, height + 0.7, outline);
+        rect(g, x, y, width, height, color);
     }
 
     private static void radial(GuiGraphicsExtractor g, double radius, double progress, int color, double width) {

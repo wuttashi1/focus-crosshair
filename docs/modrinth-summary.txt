@@ -1,20 +1,21 @@
 Name: Focus Crosshair
+Version: 1.1.0
 
 English summary:
-A minimal, spring-animated crosshair with contextual focus, mining progress and subtle movement, combat and item-use effects. Client-side Fabric.
+A bouncy, customizable crosshair with five shapes, five color skins, live preview and custom PNG import. Purely visual. Client-side Fabric.
 
 Краткое описание:
-Минималистичный анимированный прицел: фокус на объектах, прогресс добычи и ненавязчивые эффекты движения, боя и предметов. Клиентский мод Fabric.
+Пружинный прицел: пять форм, пять палитр, живой предпросмотр и импорт своего PNG. Глубокая настройка фокуса. Клиентский мод Fabric.
 
-Release: 1.0.0
-Verified Minecraft version: 26.2
-Loader: Fabric
-Client: required
-Server: unsupported (client-only mod)
-Required dependency: Fabric API
-Optional dependency: Mod Menu
+Minecraft target: 26.2
+Java: 25+
+Loader: Fabric 0.19.5+
+Required dependency: Fabric API 0.161.0+26.2
+Optional dependency: Mod Menu 20.0.3
+Client-side only; server installation is not supported or required.
 License: MIT
-Suggested categories: Decoration, Utility
-Icon: focus-crosshair-logo-512.png
+Logo: focus-crosshair-logo-512.png
+Banner: focus-crosshair-banner-1.1.png
+Runtime launch: not performed for 1.1, as requested.
 Source: https://github.com/wuttashi1/focus-crosshair
 Issues: https://github.com/wuttashi1/focus-crosshair/issues
