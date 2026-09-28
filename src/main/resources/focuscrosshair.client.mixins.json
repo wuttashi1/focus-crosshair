@@ -1,0 +1,7 @@
+{
+  "required": false,
+  "package": "dev.wutshy.focuscrosshair.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": ["MiningAccess", "InteractionMixin", "DamageMixin", "AttackMixin"],
+  "injectors": {"defaultRequire": 0}
+}

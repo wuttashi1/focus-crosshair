@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">Focus Crosshair</title>
+  <desc id="desc">Four ivory crosshair arms around a pale cyan center on charcoal.</desc>
+  <path fill="#11191e" d="M0 0h1024v1024H0z"/>
+  <g fill="#f2f4ef">
+    <rect x="472" y="208" width="80" height="200" rx="12"/>
+    <rect x="472" y="616" width="80" height="200" rx="12"/>
+    <rect x="208" y="472" width="200" height="80" rx="12"/>
+    <rect x="616" y="472" width="200" height="80" rx="12"/>
+  </g>
+  <rect x="480" y="480" width="64" height="64" rx="10" fill="#b9ebed"/>
+</svg>
